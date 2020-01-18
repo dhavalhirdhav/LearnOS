@@ -2,8 +2,8 @@ format COFF
 ;entry _start
 
 ;use16
-extrn loader_main
+extrn __main
 
 ;_start:
-  call loader_main
+  call __main
   jmp $
