@@ -88,6 +88,19 @@ sectors_error:
 disk_loop:
     jmp $
 
+
+use16
+load_kernel:
+     mov  bx, MSG_LOAD_KERNEL
+     call print
+     call print_nl
+
+     mov  bx, KERNEL_OFFSET ;read from disk and store in 0x1000
+     mov  dh, 1 ;read only 1 sector from HDD or bootable disk
+     mov  dl, [BOOT_DRIVE]
+     call disk_load
+     ret
+
 gdt_start:
      dd   0x0  ;4 bytes
      dd   0x0  ;4 bytes
@@ -219,21 +232,6 @@ BEGIN_PM:
      call print_string_pm
      call KERNEL_OFFSET
      jmp $
-
-use16
-load_kernel:
-     ;mov  ebx,  MSG_LOAD_KERNEL
-     ;call print_string_pm
-
-     mov  bx, MSG_LOAD_KERNEL
-     call print
-     call print_nl
-
-     mov  bx, KERNEL_OFFSET ;read from disk and store in 0x1000
-     mov  dh, 1 ;read only 1 sector from HDD or bootable disk
-     mov  dl, [BOOT_DRIVE]
-     call disk_load
-     ret
 
 BOOT_DRIVE db 0
 MSG_REAL_MODE db "Started in 16-bit real mode", 0
