@@ -8,27 +8,31 @@ I always like to share my knowledge with everyone around. So I have decided to m
 
 I am planning to develop many features in this operating system, some of the features which I have thought are as follows:
 
-1. Boot loader
-2. Kernel
-3. It’s own File System
-4. Multi-Threading / Multi-Tasking
-5. Ability to read and write FAT and FAT 32 File System
-6. GUI (Support for Keyboard and Mouse)
-7. Painting application
-8. Audio System and ability to play WAV, MP3, 3gp files.
-9. Network stack
-10. TCP/IP
-11. Sockets
-12. Browser
-13. Development Tools (Compiler, and maybe own language)
-14. Communication with GPU
-15. Printer support
-16. WiFi and Bluetooth support
-17. APIs (External Application development support)
-18. Pen Drive Auto Mount Support
-19. Couple of Games
-20. Development Environment (IDE)
-21. DHCP Client, DHCP Server, DNS Client, DNS Server, Web Server, etc...
+- [x] Boot loader
+- [x] 32-bit
+- [x] VGA (Standard Video Driver)
+- [ ] Kernel
+- [ ] It’s own File System
+- [ ] Multi-Threading / Multi-Tasking
+- [ ] Ability to read and write FAT and FAT 32 File System
+- [ ] GUI (Support for Keyboard and Mouse)
+- [ ] Port DOOM Game (Maybe / Wishlist)
+- [ ] Painting application
+- [ ] Audio System and ability to play WAV, MP3, 3gp files.
+- [ ] Network stack
+- [ ] TCP/IP
+- [ ] Sockets
+- [ ] Browser
+- [ ] Development Tools (Compiler, and maybe own language)
+- [ ] Communication with GPU
+- [ ] Printer support
+- [ ] WiFi and Bluetooth support
+- [ ] APIs (External Application development support)
+- [ ] Pen Drive Auto Mount Support
+- [ ] Couple of Games
+- [ ] Development Environment (IDE)
+- [ ] DHCP Client, DHCP Server, DNS Client, DNS Server, Web Server, etc...
+- [ ] Update OS to support 64-bit
 
 ## More for learning
 
