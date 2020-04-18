@@ -6,11 +6,9 @@ del *.elf
 
 echo "compile boot.asm"
 fasm boot.asm
-rem nasm boot.asm -o boot.bin
 
 echo "compile loader.asm"
 fasm loader.asm
-rem nasm loader.asm -f elf32 -o loader.o
 
 echo "compile kernel.c"
 wsl gcc -m32 -ffreestanding -c kernel.c -o kernel.o
