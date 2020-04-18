@@ -1,7 +1,7 @@
 format ELF
 
-extrn _main
+extrn main
 
 section '.text'
-  call _main
+  call main
   jmp $

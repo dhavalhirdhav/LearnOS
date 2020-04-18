@@ -13,7 +13,7 @@ fasm loader.asm
 rem nasm loader.asm -f elf32 -o loader.o
 
 echo "compile kernel.c"
-wsl gcc -m32 -ffreestanding -c kernel.c -o kernel.o
+wsl gcc -m32 -ffreestanding -o kernel.o kernel.c ports.c
 
 wsl objcopy kernel.o -O elf32-i386 kernel.elf
 wsl /usr/local/i386elfgcc/bin/i386-elf-ld -o kernel.bin -Ttext 0x1000 loader.o kernel.elf --oformat binary
