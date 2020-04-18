@@ -1,7 +1,7 @@
-format ELF
+format ELF ;instruct assembler to produce ELF (Executable and Linkable Format) file.
 
-extrn _main
+extrn main ;tell assembler that main is the external function so ignore the assembler / compiler if main is not found in code.
 
 section '.text'
-  call _main
+  call main ;call external main function.
   jmp $
