@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include "ports.h"
 
 void main() {
@@ -29,4 +30,9 @@ void main() {
     char *vga = 0xb8000;
     vga[offset_from_vga] = 'X'; 
     vga[offset_from_vga+1] = 0x0f; /* White text on black background */
+=======
+void main() {
+	char* video_memory = (char*) 0xb8000;
+	*video_memory = 'X';
+>>>>>>> master
 }

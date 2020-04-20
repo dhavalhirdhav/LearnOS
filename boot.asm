@@ -45,6 +45,17 @@ print_nl:
     popa
     ret
 
+load_kernel:
+     mov  bx, MSG_LOAD_KERNEL
+     call print
+     call print_nl
+
+     mov  bx, KERNEL_OFFSET ;read from disk and store in 0x1000
+     mov  dh, 1 ;read only 1 sector from HDD or bootable disk
+     mov  dl, [BOOT_DRIVE]
+     call disk_load
+     ret
+
 ; load 'dh' sectors from drive 'dl' into ES:BX
 disk_load:
     pusha
@@ -87,74 +98,6 @@ sectors_error:
 
 disk_loop:
     jmp $
-
-
-use16
-load_kernel:
-     mov  bx, MSG_LOAD_KERNEL
-     call print
-     call print_nl
-
-     mov  bx, KERNEL_OFFSET ;read from disk and store in 0x1000
-     mov  dh, 1 ;read only 1 sector from HDD or bootable disk
-     mov  dl, [BOOT_DRIVE]
-     call disk_load
-     ret
-
-gdt_start:
-     dd   0x0  ;4 bytes
-     dd   0x0  ;4 bytes
-
-gdt_code:
-     dw   0xffff    ;segment length, bits 0-15
-     dw   0x0       ;segment base, bits 0-15
-     db   0x0       ;segment base, bits 16-23
-     db   10011010b ;flags (8 bits)
-     db   11001111b ;flags (4 bits) + segment length, bits 16-19
-     db   0x0       ;segment base, bits 24-31
-
-gdt_data:
-     dw   0xffff
-     dw   0x0
-     db   0x0
-     db   10010010b
-     db   11001111b
-     db   0x0
-
-gdt_end:
-
-gdt_descriptor:
-     dw   gdt_end - gdt_start - 1  ;size (16-bit), always one less of its true size
-     dd   gdt_start                ;address (32-bit)
-
-CODE_SEG  equ  gdt_code - gdt_start
-DATA_SEG  equ  gdt_data - gdt_start
-
-use32
-
-VIDEO_MEMORY   equ  0xb8000
-WHITE_ON_BLACK equ 0x0f ; the color byte for each character
-
-print_string_pm:
-     pusha
-     mov  edx, VIDEO_MEMORY
-
-print_string_pm_loop:
-    mov al, [ebx] ; [ebx] is the address of our character
-    mov ah, WHITE_ON_BLACK
-
-    cmp al, 0 ; check if end of string
-    je print_string_pm_done
-
-    mov [edx], ax ; store character + attribute in video memory
-    add ebx, 1 ; next char
-    add edx, 2 ; next video memory position
-
-    jmp print_string_pm_loop
-
-print_string_pm_done:
-    popa
-    ret
 
 ; receiving the data in 'dx'
 ; For the examples we'll assume that we're called with dx=0x1234
@@ -203,7 +146,35 @@ end_hex:
 HEX_OUT:
     db '0x0000',0 ; reserve memory for our new string
 
-use16
+gdt_start:
+     dd   0x0  ;4 bytes
+     dd   0x0  ;4 bytes
+
+gdt_code:
+     dw   0xffff    ;segment length, bits 0-15
+     dw   0x0       ;segment base, bits 0-15
+     db   0x0       ;segment base, bits 16-23
+     db   10011010b ;flags (8 bits)
+     db   11001111b ;flags (4 bits) + segment length, bits 16-19
+     db   0x0       ;segment base, bits 24-31
+
+gdt_data:
+     dw   0xffff
+     dw   0x0
+     db   0x0
+     db   10010010b
+     db   11001111b
+     db   0x0
+
+gdt_end:
+
+gdt_descriptor:
+     dw   gdt_end - gdt_start - 1  ;size (16-bit), always one less of its true size
+     dd   gdt_start                ;address (32-bit)
+
+CODE_SEG  equ  gdt_code - gdt_start
+DATA_SEG  equ  gdt_data - gdt_start
+
 switch_to_pm:
     cli ; 1. disable interrupts
     lgdt [gdt_descriptor] ; 2. load the GDT descriptor
@@ -213,6 +184,7 @@ switch_to_pm:
     jmp CODE_SEG:init_pm ; 4. far jump by using a different segment
 
 use32
+
 init_pm:
      mov  ax, DATA_SEG
      mov  ds, ax
@@ -226,19 +198,42 @@ init_pm:
 
      call BEGIN_PM
 
-use32
 BEGIN_PM:
      mov  ebx, MSG_PROT_MODE
      call print_string_pm
      call KERNEL_OFFSET
      jmp $
 
+VIDEO_MEMORY   equ  0xb8000
+WHITE_ON_BLACK equ 0x0f ; the color byte for each character
+
+print_string_pm:
+     pusha
+     mov  edx, VIDEO_MEMORY
+
+print_string_pm_loop:
+    mov al, [ebx] ; [ebx] is the address of our character
+    mov ah, WHITE_ON_BLACK
+
+    cmp al, 0 ; check if end of string
+    je print_string_pm_done
+
+    mov [edx], ax ; store character + attribute in video memory
+    add ebx, 1 ; next char
+    add edx, 2 ; next video memory position
+
+    jmp print_string_pm_loop
+
+print_string_pm_done:
+    popa
+    ret
+
 BOOT_DRIVE db 0
 MSG_REAL_MODE db "Started in 16-bit real mode", 0
 MSG_PROT_MODE db "Loaded 32-bit protected mode", 0
 MSG_LOAD_KERNEL db "Loading kernel into memory", 0
-DISK_ERROR: db "Disk read error", 0
-SECTORS_ERROR: db "Incorrect number of sectors read", 0
+DISK_ERROR db "Disk read error", 0
+SECTORS_ERROR db "Incorrect number of sectors read", 0
 
 times     510-($-$$)     db   0
 dw   0xaa55
