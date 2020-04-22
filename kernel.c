@@ -1,4 +1,11 @@
+#include "drivers/screen.h"
+
 void main() {
-	char* video_memory = (char*) 0xb8000;
-	*video_memory = 'X';
+    clear();
+
+	char str[] = "Welcome to Learn OS. ";
+    printf(str);
+
+	char str1[] = "This message has been printed using printf.";
+    printf(str1);
 }

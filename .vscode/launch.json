@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "Compile and Run",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/compile.bat",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        }
+    ]
+}

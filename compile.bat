@@ -11,9 +11,16 @@ echo "compile loader.asm"
 fasm loader.asm
 
 echo "compile kernel.c"
-wsl gcc -m32 -ffreestanding -c kernel.c -o kernel.o
+wsl gcc -m32 -ffreestanding drivers/ports.h drivers/screen.h kernel.c drivers/ports.c drivers/screen.c -o kernel.o
 
+echo "Producing elf file"
 wsl objcopy kernel.o -O elf32-i386 kernel.elf
+
+echo "Linking files"
 wsl /usr/local/i386elfgcc/bin/i386-elf-ld -o kernel.bin -Ttext 0x1000 loader.o kernel.elf --oformat binary
+
+echo "Creating image...."
 type boot.bin kernel.bin > os_image.bin
+
+echo "Launching QEMU"
 qemu-system-x86_64 os_image.bin
