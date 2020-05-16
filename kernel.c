@@ -1,6 +1,6 @@
 #include "drivers/screen.h"
 
-void main() {
+void kmain() {
     clear();
 
 	char str[] = "Welcome to Learn OS. ";
