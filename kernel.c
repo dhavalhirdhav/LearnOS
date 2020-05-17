@@ -1,10 +1,8 @@
 #include "drivers/screen.h"
+#include "utils/utils.h"
 
 void kmain(void) {
-	char str[] = "Welcome to Learn OS. ";
-	char str1[] = "This message has been printed using printf.";
-
     clear();
-    printf(str);
-    printf(str1);
+    
+    printf("Welcome to Learn OS.\r\n");
 }

@@ -10,7 +10,7 @@ echo "compile boot.asm"
 fasm boot.asm
 
 echo "compile kernel.c"
-wsl gcc -g -m32 -ffreestanding -c *.c drivers/*.c -nostartfiles -nostdlib
+wsl gcc -g -m32 -ffreestanding -c *.c drivers/*.c utils/*.c -nostartfiles -nostdlib
 
 echo "link all c object files"
 wsl ld -m elf_i386 -nostdlib -T linker.ld *.o -o kernel.elf
