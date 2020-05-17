@@ -9,6 +9,22 @@ void memcopy(uint8_t *source, uint8_t *destination, int total_bytes)
     }
 }
 
+void reverse_string(char str[])
+{
+    int c, i, j;
+    for (i = 0, j = strlen(str)-1; i < j; i++, j--) {
+        c = str[i];
+        str[i] = str[j];
+        str[j] = c;
+    }
+}
+
+int strlen(char s[]) {
+    int i = 0;
+    while (s[i] != '\0') ++i;
+    return i;
+}
+
 void int_to_ascii(int n, char str[])
 {
     int i, sign;
@@ -21,56 +37,33 @@ void int_to_ascii(int n, char str[])
     } while ((n /= 10) > 0);
     
     if(sign < 0) str[i++] = '-';
-    
     str[i] = '\0';
+
+    reverse_string(str);
  }
 
-/*TODO: Works partially and needs massive improvement.*/
- void byte_to_hex(int b, char str[])
- {
-     int quotient, remainder, i;
+void hex_to_ascii(int n, char str[]) {
+    append(str, '0');
+    append(str, 'x');
+    char zeros = 0;
 
-    if(b < 1)
-    {
-        char zero[1];
-        int_to_ascii(0, zero);
-        str[i++] = zero[0];
+    int32_t tmp;
+    int i;
+    for (i = 28; i > 0; i -= 4) {
+        tmp = (n >> i) & 0xF;
+        if (tmp == 0 && zeros == 0) continue;
+        zeros = 1;
+        if (tmp > 0xA) append(str, tmp - 0xA + 'a');
+        else append(str, tmp + '0');
     }
-    else
-    {
-        quotient = b;
-        i = 0;
-        while(quotient != 0)
-        {
-            remainder = quotient % 16;
-            char newstr[1];
-            switch (remainder)
-            {
-                case 10:
-                    str[i++] = 'A';
-                    break;
-                case 11:
-                    str[i++] = 'B';
-                    break;
-                case 12:
-                    str[i++] = 'C';
-                    break;
-                case 13:
-                    str[i++] = 'D';
-                    break;
-                case 14:
-                    str[i++] = 'E';
-                    break;
-                case 15:
-                    str[i++] = 'F';
-                    break;
-                default:
-                    int_to_ascii(remainder, newstr);
-                    str[i++] = newstr[0];
-                    break;
-            }
 
-            quotient = quotient / 16;
-        }
-    }
- }
+    tmp = n & 0xF;
+    if (tmp >= 0xA) append(str, tmp - 0xA + 'a');
+    else append(str, tmp + '0');
+}
+
+void append(char s[], char n) {
+    int len = strlen(s);
+    s[len] = n;
+    s[len+1] = '\0';
+}
