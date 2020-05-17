@@ -35,5 +35,5 @@ type boot.bin kernel.bin > os_image.bin
 
 echo "Launching QEMU"
 qemu-system-x86_64 os_image.bin
-rem bochs -f bochsconfig.txt
+rem bochs -f bochsconfig.conf
 rem bochsdbg -f bochsconfig.conf
