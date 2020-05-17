@@ -23,52 +23,100 @@ void clear() {
     set_cursor_position(CURRENT_CURSOR_POSITION);
 }
 
-void printf(char *str, ...) {
+void printf(const char* format, ...) {
+    uint8_t **arg = (uint8_t **) &format;
+    uint8_t c;
+    uint8_t buf[20];
+
+    arg++;
+
+    while((c = *format++) != 0) {
+        if (c != '%')
+            putchar (c);
+        else {
+            uint8_t *p, *p2;
+            int pad0 = 0, pad = 0;
+
+            c = *format++;
+            if (c == '0') {
+                pad0 = 1;
+                c = *format++;
+            }
+
+            if (c >= '0' && c <= '9') {
+                pad = c - '0';
+                c = *format++;
+            }
+
+            switch (c) {
+            case 'X':
+            case 'd':
+            case 'u':
+            case 'x':
+                itoa (buf, c, *((int *) arg++));
+                p = buf;
+                goto string;
+                break;
+            case 's':
+                p = *arg++;
+                if (! p)
+                p = (uint8_t*)"(null)";
+    string:
+                for (p2 = p; *p2; p2++);
+                for (; p2 < p + pad; p2++)
+                putchar (pad0 ? '0' : ' ');
+                while (*p)
+                putchar (*p++);
+                break;
+            default:
+                putchar (*((int *) arg++));
+                break;
+            }
+            }
+        }
+}
+
+void putchar(char* str)
+{
     char* video_memory = (char*) VIDEO_ADDRESS;
-    int pos = 0;
+
     int cursorPosition = get_cursor_position();
-    while(str[pos] != 0)
+    int row = get_current_cursor_row(cursorPosition);
+    int column = get_current_cursor_column(cursorPosition);
+
+    if(str == '\n')
     {
-        int row = get_current_cursor_row(cursorPosition);
-        int column = get_current_cursor_column(cursorPosition);
+        cursorPosition = get_offset(column, row + 1);
+    }
+    else if(str == '\r')
+    {
+        cursorPosition = get_offset(0, row);
+    }
+    else
+    {
+        video_memory[cursorPosition] = str;
+        video_memory[cursorPosition + 1] = STANDARD_MSG_COLOR;
+        cursorPosition = cursorPosition + 2;
+    }
 
-        if(str[pos] == '\n')
+    //check are we on last row?
+    if(cursorPosition >= TOTAL_ROWS * TOTAL_COLS * 2)
+    {
+        int i;
+        /*shift the content by 1 line up*/
+        for(i = 1; i < TOTAL_ROWS; i++)
         {
-            cursorPosition = get_offset(column, row + 1);
-            pos++;
+            memcopy(get_offset(0, i) + VIDEO_ADDRESS, get_offset(0, i - 1) + VIDEO_ADDRESS, TOTAL_COLS * 2);
         }
-        else if(str[pos] == '\r')
+
+        /*create one blank line at the end*/
+        char *last_line = get_offset(0, TOTAL_ROWS - 1) + VIDEO_ADDRESS;
+        for(i = 0; i < TOTAL_COLS * 2; i++)
         {
-            cursorPosition = get_offset(0, row);
-            pos++;
-        }
-        else
-        {
-            video_memory[cursorPosition] = str[pos++];
-            video_memory[cursorPosition + 1] = STANDARD_MSG_COLOR;
-            cursorPosition = cursorPosition + 2;
+            last_line[i] = 0;
         }
 
-
-        //check are we on last row?
-        if(cursorPosition >= TOTAL_ROWS * TOTAL_COLS * 2)
-        {
-            int i;
-            /*shift the content by 1 line up*/
-            for(i = 1; i < TOTAL_ROWS; i++)
-            {
-                memcopy(get_offset(0, i) + VIDEO_ADDRESS, get_offset(0, i - 1) + VIDEO_ADDRESS, TOTAL_COLS * 2);
-            }
-
-            /*create one blank line at the end*/
-            char *last_line = get_offset(0, TOTAL_ROWS - 1) + VIDEO_ADDRESS;
-            for(i = 0; i < TOTAL_COLS * 2; i++)
-            {
-                last_line[i] = 0;
-            }
-
-            cursorPosition = get_offset(0, TOTAL_ROWS - 1); /*TODO: revisit this.. last line cursor not visible*/
-        }
+        cursorPosition = get_offset(0, TOTAL_ROWS - 1); /*TODO: revisit this.. last line cursor not visible*/
     }
     set_cursor_position(cursorPosition);
 }
@@ -102,3 +150,34 @@ int get_current_cursor_column(int cursorPosition) {
 }
 
 int get_offset(int col, int row) { return 2 * (row * TOTAL_COLS + col); }
+
+void itoa(uint8_t *buf, uint32_t base, uint32_t d) {
+   uint8_t *p = buf;
+   uint8_t *p1, *p2;
+   uint32_t ud = d;
+   uint32_t divisor = 10;
+
+   if(base == 'd' && d < 0) {
+       *p++ = '-';
+       buf++;
+       ud = -d;
+   } else
+     if (base == 'x')
+         divisor = 16;
+
+   do{
+       uint32_t remainder = ud % divisor;
+       *p++ = (remainder < 10) ? remainder + '0' : remainder + 'a' - 10;
+   } while (ud /= divisor);
+
+   *p = 0;
+   p1 = buf;
+   p2 = p - 1;
+   while (p1 < p2) {
+     uint8_t tmp = *p1;
+     *p1 = *p2;
+     *p2 = tmp;
+     p1++;
+     p2--;
+   }
+}

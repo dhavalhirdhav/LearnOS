@@ -8,4 +8,4 @@
 #define REG_SCREEN_DATA 0x3d5
 
 void clear();
-void printf(char* str, ...);
+void printf(const char* format, ...);
