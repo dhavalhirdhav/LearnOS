@@ -10,7 +10,7 @@ echo "compile boot.asm"
 fasm boot.asm
 
 echo "compile kernel.c"
-wsl gcc -g -m32 -ffreestanding -c *.c drivers/*.c utils/*.c drivers/pci/*.c -nostartfiles -nostdlib
+wsl gcc -g -m32 -ffreestanding -c *.c drivers/*.c utils/*.c drivers/pci/*.c drivers/ata/*.c -nostartfiles -nostdlib
 
 echo "link all c object files"
 wsl ld -m elf_i386 -nostdlib -T linker.ld *.o -o kernel.elf
@@ -34,6 +34,6 @@ echo "Creating image...."
 type boot.bin kernel.bin > os_image.bin
 
 echo "Launching QEMU"
-qemu-system-x86_64 os_image.bin
-rem bochs -f bochsconfig.conf
+rem qemu-system-x86_64 os_image.bin
+bochs -f bochsconfig.conf
 rem bochsdbg -f bochsconfig.conf

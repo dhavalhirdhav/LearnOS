@@ -82,6 +82,8 @@ void pci_test()
                     // printf("%x\t", (subclass & 0xFF)); /*revisionid*/
 
                     printf("|  %d  |  %d  |  %d  |    %x   |   %x    | %x   |   %x   |\r\n", bus, device, function, (vendor & 0x0000FFFF), (vendor & 0xFFFF0000) >> 16, (subclass & 0x000000FF) , (subclass & 0x0000FF00) >> 8); /*, (subclass & 0x00FF0000) >> 16, (subclass & 0xFF000000) >> 24);*/
+                    //uint32_t bar0 = pci_read(bus, device, function, PCI_BASE_ADDRESS_0_OFFSET, PCI_BASE_ADDRESS_0_REG);
+                    //printf("Bar0: %x\r\n", bar0);
                 }
             }
         }
