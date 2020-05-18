@@ -92,6 +92,10 @@ void putchar(char* str)
     {
         cursorPosition = get_offset(0, row);
     }
+    else if(str == '\t')
+    {
+        cursorPosition = get_offset(column + 4, row);
+    }
     else
     {
         video_memory[cursorPosition] = str;
