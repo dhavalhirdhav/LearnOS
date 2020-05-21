@@ -12,7 +12,7 @@ void kmain(void) {
 
     uint32_t* target;
 
-    read_sectors_ATA_PIO(0x0, 0x0, 2, target);
+    read_sectors_ATA_PIO(target, 0x0, 2);
     
     int i;
     i = 0;
@@ -25,11 +25,16 @@ void kmain(void) {
 
     printf("\r\n");
     printf("writing 0...\r\n");
-    write_sectors_ATA_PIO(0x0, 2);
+    bytes bwrite[256];
+    for(i = 0; i < 256; i++)
+    {
+        bwrite[i] = 0x0;
+    }
+    write_sectors_ATA_PIO(0x0, 2, bwrite);
 
 
     printf("reading...\r\n");
-    read_sectors_ATA_PIO(0x0, 0x0, 2, target);
+    read_sectors_ATA_PIO(target, 0x0, 2);
     
     i = 0;
     while(i < 256)
