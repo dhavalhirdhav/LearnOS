@@ -1,6 +1,8 @@
 #include "drivers/screen.h"
 #include "utils/utils.h"
 #include "drivers/ata/ata.h"
+#include "utils/mem.h"
+//#include "fs/fs.h"
 
 void kmain(void) {
     clear();
@@ -8,34 +10,45 @@ void kmain(void) {
     printf("Welcome to Learn OS.\r\n");
     printf("Memory address of kmain in: 0x%x\r\n\r\n", kmain);
 
-    printf("reading...\r\n");
+    uint32_t phy_addr;
+    uint32_t page = malloc(1000, 1, &phy_addr);
+    printf("page: %x\r\n", page);
+    printf("phy addr: %x\r\n", phy_addr);
 
-    uint32_t* target;
+    printf("loading kernel into memory at 1M (0x10000)...\r\n");
 
-    read_sectors_ATA_PIO(0x0, 0x0, 2, target);
-    
-    int i;
-    i = 0;
-    while(i < 256)
+    read_sectors_ATA_PIO(page, 0x16, 42);
+
+    uint32_t* aa = page;
+    printf("\r\n\r\n");
+
+    if(aa[0] == 0x464C457F)
     {
-        printf("%x ", target[i] & 0xFF);
-        printf("%x ", target[i] >> 8);
-        i++;
+        printf("ELF File.\r\n");
     }
+    int bits = (aa[1] >> 0) & 0xFF; //5
+    int endian = (aa[1] >> 8) & 0xFF; //6
+    if(bits == 1)
+    {
+        printf("32-bit\r\n");
+    }
+    if(endian == 1)
+    {
+        printf("little endian\r\n");
+    }
+    int exec = aa[4] >> 0 & 0xFFFF; //16-17
+    if(exec == 3)
+    {
+        printf("shared\r\n");
+    }
+    printf("entry position : 0x%x \r\n", 0x11000 + aa[6]);
 
     printf("\r\n");
-    printf("writing 0...\r\n");
-    write_sectors_ATA_PIO(0x0, 2);
+    printf("executing kernel from: 0x%x....\r\n", 0x11000 + aa[6]);
 
+    void (*func)(void) = 0x11000 + aa[6]; func();
 
-    printf("reading...\r\n");
-    read_sectors_ATA_PIO(0x0, 0x0, 2, target);
-    
-    i = 0;
-    while(i < 256)
-    {
-        printf("%x ", target[i] & 0xFF);
-        printf("%x ", target[i] >> 8);
-        i++;
-    }
+    // //printf("Initializing file system...\r\n");
+    // //InitializeFS();
+    // // printf("DFFS v1.00 File System installed at: 0x3c00\r\n");
 }
