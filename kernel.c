@@ -16,17 +16,17 @@ void kmain(void) {
     
     int i;
     i = 0;
-    while(i < 256)
+    while(i < 128)
     {
         printf("%x ", target[i] & 0xFF);
-        printf("%x ", target[i] >> 8);
+        printf("%x ", (target[i] >> 8) & 0xFF);
         i++;
     }
 
     printf("\r\n");
     printf("writing 0...\r\n");
-    bytes bwrite[256];
-    for(i = 0; i < 256; i++)
+    char bwrite[512];
+    for(i = 0; i < 512; i++)
     {
         bwrite[i] = 0x0;
     }
@@ -37,10 +37,10 @@ void kmain(void) {
     read_sectors_ATA_PIO(target, 0x0, 1);
     
     i = 0;
-    while(i < 256)
+    while(i < 128)
     {
         printf("%x ", target[i] & 0xFF);
-        printf("%x ", target[i] >> 8);
+        printf("%x ", (target[i] >> 8) & 0xFF);
         i++;
     }
 }
