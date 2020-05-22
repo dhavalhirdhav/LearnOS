@@ -1,4 +1,4 @@
-#include "prog.h"
+#include "kernel.h"
 #include "../drivers/screen.h"
 
 void start()
