@@ -13,6 +13,7 @@ I am planning to develop many features in this operating system, some of the fea
 - [x] VGA (Standard Video Driver)
 - [ ] Kernel
 - [ ] It’s own File System
+- [ ] AHCI - SATA driver
 - [ ] Multi-Threading / Multi-Tasking
 - [ ] Ability to read and write FAT and FAT 32 File System
 - [ ] GUI (Support for Keyboard and Mouse)
