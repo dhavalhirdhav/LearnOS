@@ -1,5 +1,5 @@
 OUTPUT_FORMAT(elf32-i386)
-ENTRY(start)
+ENTRY(loadkernel)
 SECTIONS
 {
     . = 0x01000; /*0x001000*/
