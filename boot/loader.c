@@ -14,7 +14,7 @@ void loadkernel(void) {
     printf("page: %x\r\n", page);
     printf("phy addr: %x\r\n", phy_addr);
 
-    printf("loading kernel into memory at 1M (0x10000)...\r\n");
+    printf("loading kernel into memory at 1M (0x%x)...\r\n", page);
 
     read_sectors_ATA_PIO(page, 0x12, 38);
 
