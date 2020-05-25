@@ -1,7 +1,20 @@
 #include "kernel.h"
 #include "../drivers/screen.h"
+#include "../cpu/gdt.h"
+#include "../cpu/idt.h"
+#include "../cpu/common.h"
 
 void start()
 {
-    printf("I am the actual kernel :D");
+    printf("LearnOS Kernel loading....\r\n\r\n");
+    
+    printf("Setting up GDT...\t\t\t\t\t\t\t\t");
+    setupGDT();
+    printf("Done\r\n");
+
+    printf("Setting up IDT...\t\t\t\t\t\t\t\t");
+    setupIDT();
+    printf("Done\r\n");
+
+    enable_interrupt();
 }

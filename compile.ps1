@@ -1,5 +1,5 @@
-param($paramName)
-Write-Output $paramName
+param($paramName, $emuName)
+
 Function Create-Directory($directoryPath) {
     if(Test-Path -Path $directoryPath -PathType Container) {
         Write-Output "$directoryPath directory exists..."
@@ -63,7 +63,7 @@ Function Build() {
     Remove-Item debug/elf/*.elf
     
     Write-Output "Compiling Kernel...."
-    wsl gcc -g -m32 -ffreestanding utils/*.c drivers/*.c kernel/*.c -nostartfiles -nostdlib -o kernel.o -T ld/kernel.ld
+    wsl gcc -g -m32 -ffreestanding utils/*.c drivers/*.c kernel/*.c cpu/*.c -nostartfiles -nostdlib -o kernel.o -T ld/kernel.ld -mgeneral-regs-only
     Move-Item *.o 'debug/obj'
     #wsl ld -m elf_i386 -nostdlib -T linker.ld *.o -o prog.elf
     objdump debug/obj/kernel.o -phxd > debug/objdump/kernel.objdump
@@ -84,10 +84,19 @@ Function Make()
 
 Function RunOS()
 {
-    Write-Output "Launching QEMU"
-    qemu-system-x86_64 debug/bin/os_image.bin
-    # #bochs -f bochsconfig.conf
-    # #bochsdbg -f bochsconfig.conf
+    if($emuName -eq "qemu" -Or $Null -eq $emuName)
+    {
+        Write-Output "Launching QEMU"
+        qemu-system-x86_64 debug/bin/os_image.bin
+    }
+    elseif($emuName -eq "bochs")
+    {
+        bochs -f bochsconfig.conf
+    }
+    elseif($emuName -eq "bochs-debug")
+    {
+        bochsdbg -f bochsconfig.conf
+    }
 }
 
 if($paramName -eq "all" -Or $Null -eq $paramName)
