@@ -3,6 +3,7 @@
 #include "../cpu/gdt.h"
 #include "../cpu/idt.h"
 #include "../cpu/common.h"
+#include "../cpu/timer.h"
 
 void start()
 {
