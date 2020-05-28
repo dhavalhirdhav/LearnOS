@@ -46,33 +46,8 @@ void init_pic()
 __attribute__ ((interrupt))
 void default_handler(struct interrupt_frame *frame)
 {
-    //printf("Default handler called.\r\n");
+    printf("Default handler called - %x\r\n", frame);
     port_byte_out(0x20, 0x20);
-}
-
-__attribute__ ((interrupt))
-void keyboard_handler(struct interrupt_frame *frame)
-{
-	uint8_t scan_code = port_byte_in(0x60);
-    
-	//char dd[] = "Keyboard handler called: ";
-    //printf(dd);
-
-	char *sc_ascii;
-	int_to_ascii(scan_code, sc_ascii);
-	printf(sc_ascii);
-	printf("-");
-	if(scan_code == 0x1E)
-	{
-		printf("A");
-	}
-	else if(scan_code == 0x1F)
-	{
-		printf("S");
-	}
-	printf("\r\n");
-
-	port_byte_out(0x20, 0x20);
 }
 
 void setupIDT() {
@@ -92,8 +67,6 @@ void setupIDT() {
 
     for (i=0;i<MAX_INTERRUPTS;i++)
         install_ir(i,IDT_DESC_BIT32 | IDT_DESC_PRESENT, 0x08, default_handler);
-
-    install_ir(33, IDT_DESC_BIT32|IDT_DESC_PRESENT, 0x08 ,keyboard_handler); //keyboard IRQ1
 
     init_pic();
     __asm__ __volatile__("lidt %0" :: "m"(_idtr));
