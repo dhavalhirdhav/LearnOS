@@ -17,5 +17,14 @@ void start()
     setupIDT();
     printf("Done\r\n");
 
+    initTimer(100);
+
     enable_interrupt();
+
+    int i = 0;
+    for(i = 0; i < 10; i++)
+    {
+        printf("this should take 10 seconds to print: %d\r\n", i);
+        sleep(100); /*sleep for 1 second*/
+    }
 }
